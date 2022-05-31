@@ -20,5 +20,7 @@ func init() {
 		os.Exit(1)
 	}
 
-	Config = ConfigList{}
+	Config = ConfigList{
+		Logfile: cfg.Section("fish_go").Key("log_file").String(),
+	}
 }

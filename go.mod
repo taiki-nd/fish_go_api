@@ -1,4 +1,4 @@
-module github.com/taiki-nd/fish_go
+module fish_go_api
 
 go 1.17
 
