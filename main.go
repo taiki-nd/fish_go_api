@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fish_go_api/config"
+	"fish_go_api/utils"
+
+	"log"
+)
 
 func main() {
-	fmt.Println("hello world!")
+	utils.Logging(config.Config.Logfile)
+	log.Println("hello world!")
 }
