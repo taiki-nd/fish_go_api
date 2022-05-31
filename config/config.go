@@ -8,7 +8,13 @@ import (
 )
 
 type ConfigList struct {
-	Logfile string
+	Logfile         string
+	SqlDevelop      string
+	HostDevelop     string
+	PortDevelop     string
+	NameDevelop     string
+	UserDevelop     string
+	PasswordDevelop string
 }
 
 var Config ConfigList
@@ -21,6 +27,12 @@ func init() {
 	}
 
 	Config = ConfigList{
-		Logfile: cfg.Section("fish_go").Key("log_file").String(),
+		Logfile:         cfg.Section("fish_go").Key("log_file").String(),
+		SqlDevelop:      cfg.Section("db_development").Key("sql_develop").String(),
+		HostDevelop:     cfg.Section("db_development").Key("host_develop").String(),
+		PortDevelop:     cfg.Section("db_development").Key("port_develop").String(),
+		NameDevelop:     cfg.Section("db_development").Key("name_develop").String(),
+		UserDevelop:     cfg.Section("db_development").Key("user_develop").String(),
+		PasswordDevelop: cfg.Section("db_development").Key("password_develop").String(),
 	}
 }
