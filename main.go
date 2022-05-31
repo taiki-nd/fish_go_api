@@ -2,6 +2,7 @@ package main
 
 import (
 	"fish_go_api/config"
+	"fish_go_api/db"
 	"fish_go_api/routes"
 	"fish_go_api/utils"
 
@@ -12,6 +13,9 @@ import (
 
 func main() {
 	utils.Logging(config.Config.Logfile)
+
+	db.ConnectToDb()
+
 	app := fiber.New()
 
 	routes.Routes(app)
