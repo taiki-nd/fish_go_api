@@ -2,6 +2,7 @@ package db
 
 import (
 	"fish_go_api/config"
+	"fish_go_api/models"
 	"fmt"
 	"log"
 
@@ -21,4 +22,6 @@ func ConnectToDb() {
 	}
 
 	log.Printf("success db connection: %v", db)
+
+	db.AutoMigrate(&models.User{})
 }
