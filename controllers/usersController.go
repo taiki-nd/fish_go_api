@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"fish_go_api/controllerlogics"
 	"fish_go_api/db"
 	"fish_go_api/models"
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -43,4 +45,52 @@ func UsersCreate(c *fiber.Ctx) error {
 	log.Printf("finish register: %v %v", user.FirstName, user.LastName)
 
 	return c.JSON(user)
+}
+
+func Login(c *fiber.Ctx) error {
+	log.Println("start login")
+
+	var data map[string]string
+
+	err := c.BodyParser(&data)
+	if err != nil {
+		log.Printf("login error: %v", err)
+		return err
+	}
+
+	var user models.User
+	db.DB.Where("email = ?", data["email"]).First(&user)
+	if user.Id == 0 {
+		c.SendStatus(400)
+		log.Printf("user not found: %v", data["email"])
+		return c.JSON(fiber.Map{
+			"message": "user not found",
+		})
+	}
+
+	err = user.ComparePassword(data["password"])
+	if err != nil {
+		c.SendStatus(400)
+		log.Printf("incorrect password: ID = %v", user.Id)
+		return c.JSON(fiber.Map{
+			"message": "incorrect password",
+		})
+	}
+
+	token, err := controllerlogics.GenerateJwt(int(user.Id))
+	if err != nil {
+		return c.SendStatus(500)
+	}
+
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+	}
+	c.Cookie(&cookie)
+
+	log.Printf("login success: %v", data["email"])
+
+	return c.JSON(token)
 }
