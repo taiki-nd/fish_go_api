@@ -8,12 +8,12 @@ import (
 
 type User struct {
 	Id              uint      `json:"id" gorm:"primarykey"`
-	FirstName       string    `json:"first_name"`
-	LastName        string    `json:"last_name"`
-	Email           string    `json:"email" gorm:"unique"`
-	Password        []byte    `json:"-"`
+	FirstName       string    `json:"first_name" gorm:"not null; size:256"`
+	LastName        string    `json:"last_name" gorm:"not null; size:256"`
+	Email           string    `json:"email" gorm:"unique; not null; size:256"`
+	Password        []byte    `json:"-" gorm:"not null;"`
 	PasswordConfirm []byte    `json:"-"`
-	PermissionType  string    `json:"permission_type"`
+	PermissionType  string    `json:"permission_type" gorm:"not null; size:256"`
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 }
