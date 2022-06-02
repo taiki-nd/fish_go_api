@@ -150,13 +150,13 @@ func UserUpdate(c *fiber.Ctx) error {
 		})
 	}
 
-	//check id match & permission
+	//check permission
 	var loginUser models.User
 	db.DB.Where("id =?", issuer).First(&loginUser)
-	if user.Id != loginUser.Id && loginUser.PermissionType != "admin" {
-		log.Println("failed update user: user's id dose not match or you need admin permission")
+	if loginUser.PermissionType != "admin" {
+		log.Println("failed update user: you need admin permission")
 		return c.JSON(fiber.Map{
-			"message": "failed update user: user's id dose not match or you need admin permission",
+			"message": "failed update user: you need admin permission",
 		})
 	}
 
