@@ -68,6 +68,16 @@ func UsersCreate(c *fiber.Ctx) error {
 		return err
 	}
 
+	// check email unique
+	var createdUser models.User
+	db.DB.Where("email = ?", data["email"]).First(&createdUser)
+	if createdUser.Id != 0 {
+		log.Printf("failed create user: exists account: mail = %v", data["email"])
+		return c.JSON(fiber.Map{
+			"message": fmt.Sprintf("failed create user: exists account: mail = %v", data["email"]),
+		})
+	}
+
 	if data["password"] != data["password_confirm"] {
 		c.Status(400)
 		log.Println("password & password_confirm dose not match.")
