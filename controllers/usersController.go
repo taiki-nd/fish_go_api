@@ -4,6 +4,7 @@ import (
 	"fish_go_api/controllerlogics"
 	"fish_go_api/db"
 	"fish_go_api/models"
+	"fmt"
 	"log"
 	"time"
 
@@ -78,12 +79,42 @@ func UserShow(c *fiber.Ctx) error {
 */
 func UserUpdate(c *fiber.Ctx) error {
 	user := controllerlogics.GetUserFromId(c)
+
+	//check account
+	err := db.DB.First(&user).Error
+	if err != nil {
+		log.Printf("failed update user: user not found: id = %v", user.Id)
+		return c.JSON(fiber.Map{
+			"message": fmt.Sprintf("failed update user: user not found: id = %v", user.Id),
+		})
+	}
+
 	log.Printf("start update user: id = %v", user.Id)
 
-	err := c.BodyParser(&user)
-	if err != nil {
-		log.Printf("put method error: %v", err)
-		return err
+	// check login or not
+	cookie := c.Cookies("jwt")
+	issuer, _ := controllerlogics.ParseJwt(cookie)
+	if issuer == "" {
+		log.Println("failed update user: please login")
+		return c.JSON(fiber.Map{
+			"message": "please login",
+		})
+	}
+
+	//check id match & permission
+	var loginUser models.User
+	db.DB.Where("id =?", issuer).First(&loginUser)
+	if user.Id != loginUser.Id && loginUser.PermissionType != "admin" {
+		log.Println("failed update user: user's id dose not match or you need admin permission")
+		return c.JSON(fiber.Map{
+			"message": "failed update user: user's id dose not match or you need admin permission",
+		})
+	}
+
+	err2 := c.BodyParser(&user)
+	if err2 != nil {
+		log.Printf("put method error: %v", err2)
+		return err2
 	}
 
 	db.DB.Model(&user).Updates(user)
