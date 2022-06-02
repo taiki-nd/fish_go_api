@@ -177,7 +177,37 @@ func UserUpdate(c *fiber.Ctx) error {
 */
 func UserDelete(c *fiber.Ctx) error {
 	user := controllerlogics.GetUserFromId(c)
+
+	//check account
+	err := db.DB.First(&user).Error
+	if err != nil {
+		log.Printf("failed delete user: user not found: id = %v", user.Id)
+		return c.JSON(fiber.Map{
+			"message": fmt.Sprintf("failed delete user: user not found: id = %v", user.Id),
+		})
+	}
+
 	log.Printf("start delete user: id = %v", user.Id)
+
+	// check login or not
+	cookie := c.Cookies("jwt")
+	issuer, _ := controllerlogics.ParseJwt(cookie)
+	if issuer == "" {
+		log.Println("failed delete user: please login")
+		return c.JSON(fiber.Map{
+			"message": "please login",
+		})
+	}
+
+	//check permission
+	var loginUser models.User
+	db.DB.Where("id =?", issuer).First(&loginUser)
+	if loginUser.PermissionType != "admin" {
+		log.Println("failed delete user: you need admin permission")
+		return c.JSON(fiber.Map{
+			"message": "failed delete user: you need admin permission",
+		})
+	}
 
 	db.DB.Delete(user)
 	log.Println("success delete user")
