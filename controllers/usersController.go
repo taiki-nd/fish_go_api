@@ -14,6 +14,9 @@ func UsersIndex(c *fiber.Ctx) error {
 	return c.SendString("Hello, World 👋!")
 }
 
+/*
+	Create user
+*/
 func UsersCreate(c *fiber.Ctx) error {
 	log.Println("start to create user")
 
@@ -47,6 +50,9 @@ func UsersCreate(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
+/*
+	Login
+*/
 func Login(c *fiber.Ctx) error {
 	log.Println("start login")
 
@@ -93,4 +99,17 @@ func Login(c *fiber.Ctx) error {
 	log.Printf("login success: %v", data["email"])
 
 	return c.JSON(token)
+}
+
+/*
+	User infomation
+*/
+func User(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+	issuer, _ := controllerlogics.ParseJwt(cookie)
+
+	var user models.User
+	db.DB.Where("id =?", issuer).First(&user)
+
+	return c.JSON(&user)
 }
