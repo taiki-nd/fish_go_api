@@ -7,5 +7,12 @@ import (
 )
 
 func Routes(app *fiber.App) {
-	app.Get("/", controllers.UsersIndex)
+	app.Get("api/users", controllers.UsersIndex)
+	app.Post("/api/users", controllers.UsersCreate)
+	app.Get("/api/user/:id", controllers.UserShow)
+	app.Put("/api/user/:id", controllers.UserUpdate)
+	app.Delete("/api/user/:id", controllers.UserDelete)
+	app.Post("/api/login", controllers.Login)
+	app.Post("/api/user", controllers.User)
+	app.Post("/api/logout", controllers.Logout)
 }
