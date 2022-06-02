@@ -93,6 +93,21 @@ func UserUpdate(c *fiber.Ctx) error {
 }
 
 /*
+	UserDelete
+*/
+func UserDelete(c *fiber.Ctx) error {
+	user := controllerlogics.GetUserFromId(c)
+	log.Printf("start delete user: id = %v", user.Id)
+
+	db.DB.Delete(user)
+	log.Println("success delete user")
+
+	return c.JSON(fiber.Map{
+		"message": "success delete user",
+	})
+}
+
+/*
 	Login
 */
 func Login(c *fiber.Ctx) error {
