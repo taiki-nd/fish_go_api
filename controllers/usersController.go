@@ -10,8 +10,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+/*
+	Index user
+*/
 func UsersIndex(c *fiber.Ctx) error {
-	return c.SendString("Hello, World 👋!")
+	log.Println("get all users")
+
+	var users []models.User
+	db.DB.Find(&users)
+
+	return c.JSON(fiber.Map{
+		"data": users,
+	})
 }
 
 /*
