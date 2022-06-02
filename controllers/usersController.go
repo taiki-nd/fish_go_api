@@ -96,7 +96,7 @@ func Login(c *fiber.Ctx) error {
 	}
 	c.Cookie(&cookie)
 
-	log.Printf("login success: %v", data["email"])
+	log.Printf("success login: %v", data["email"])
 
 	return c.JSON(token)
 }
@@ -112,4 +112,29 @@ func User(c *fiber.Ctx) error {
 	db.DB.Where("id =?", issuer).First(&user)
 
 	return c.JSON(&user)
+}
+
+/*
+	Logout
+*/
+func Logout(c *fiber.Ctx) error {
+	issuer, _ := controllerlogics.ParseJwt(c.Cookies("jwt"))
+
+	var user models.User
+	db.DB.Where("id = ?", issuer).First(&user)
+
+	log.Printf("start logout: id = %v", user.Id)
+
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HTTPOnly: true,
+	}
+	c.Cookie(&cookie)
+	log.Println("success logout")
+
+	return c.JSON(fiber.Map{
+		"message": "success logout",
+	})
 }
