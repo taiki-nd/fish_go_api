@@ -1,14 +1,25 @@
 package controllerlogics
 
 import (
+	"fish_go_api/models"
 	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Claims struct {
 	jwt.StandardClaims
+}
+
+func GetUserFromId(c *fiber.Ctx) models.User {
+	id, _ := strconv.Atoi(c.Params("id"))
+	user := models.User{
+		Id: uint(id),
+	}
+
+	return user
 }
 
 func GenerateJwt(userID int) (string, error) {

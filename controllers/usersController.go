@@ -61,6 +61,18 @@ func UsersCreate(c *fiber.Ctx) error {
 }
 
 /*
+	UserShow
+*/
+func UserShow(c *fiber.Ctx) error {
+	user := controllerlogics.GetUserFromId(c)
+
+	db.DB.Find(&user)
+	log.Printf("show user: id = %v", user.Id)
+
+	return c.JSON(user)
+}
+
+/*
 	Login
 */
 func Login(c *fiber.Ctx) error {
