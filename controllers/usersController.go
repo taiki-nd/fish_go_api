@@ -66,7 +66,27 @@ func UsersCreate(c *fiber.Ctx) error {
 */
 func UserShow(c *fiber.Ctx) error {
 	user := controllerlogics.GetUserFromId(c)
-	log.Printf("get user: id = %v", user.Id)
+
+	//check account
+	err := db.DB.First(&user).Error
+	if err != nil {
+		log.Printf("failed show user: user not found: id = %v", user.Id)
+		return c.JSON(fiber.Map{
+			"message": fmt.Sprintf("failed show user: user not found: id = %v", user.Id),
+		})
+	}
+
+	log.Printf("start show user: id = %v", user.Id)
+
+	// check login or not
+	cookie := c.Cookies("jwt")
+	issuer, _ := controllerlogics.ParseJwt(cookie)
+	if issuer == "" {
+		log.Println("failed show user: please login")
+		return c.JSON(fiber.Map{
+			"message": "please login",
+		})
+	}
 
 	db.DB.Find(&user)
 	log.Printf("show user: id = %v", user.Id)
