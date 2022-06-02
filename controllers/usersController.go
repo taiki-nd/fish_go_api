@@ -40,6 +40,26 @@ func UsersIndex(c *fiber.Ctx) error {
 func UsersCreate(c *fiber.Ctx) error {
 	log.Println("start to create user")
 
+	// check login or not
+	cookie := c.Cookies("jwt")
+	issuer, _ := controllerlogics.ParseJwt(cookie)
+	if issuer == "" {
+		log.Println("failed create user: please login")
+		return c.JSON(fiber.Map{
+			"message": "please login",
+		})
+	}
+
+	//check permission
+	var loginUser models.User
+	db.DB.Where("id =?", issuer).First(&loginUser)
+	if loginUser.PermissionType != "admin" {
+		log.Println("failed create user: you need admin permission")
+		return c.JSON(fiber.Map{
+			"message": "failed create user: you need admin permission",
+		})
+	}
+
 	var data map[string]string
 
 	err := c.BodyParser(&data)
