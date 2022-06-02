@@ -55,7 +55,7 @@ func UsersCreate(c *fiber.Ctx) error {
 	user.SetPassword(data["password"])
 
 	db.DB.Create(&user)
-	log.Printf("finish register: %v %v", user.FirstName, user.LastName)
+	log.Printf("finish create user: %v %v", user.FirstName, user.LastName)
 
 	return c.JSON(user)
 }
@@ -65,9 +65,29 @@ func UsersCreate(c *fiber.Ctx) error {
 */
 func UserShow(c *fiber.Ctx) error {
 	user := controllerlogics.GetUserFromId(c)
+	log.Printf("get user: id = %v", user.Id)
 
 	db.DB.Find(&user)
 	log.Printf("show user: id = %v", user.Id)
+
+	return c.JSON(user)
+}
+
+/*
+	UserUpdate
+*/
+func UserUpdate(c *fiber.Ctx) error {
+	user := controllerlogics.GetUserFromId(c)
+	log.Printf("start update user: id = %v", user.Id)
+
+	err := c.BodyParser(&user)
+	if err != nil {
+		log.Printf("put method error: %v", err)
+		return err
+	}
+
+	db.DB.Model(&user).Updates(user)
+	log.Println("success update user")
 
 	return c.JSON(user)
 }
