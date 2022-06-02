@@ -16,6 +16,15 @@ import (
 */
 func UsersIndex(c *fiber.Ctx) error {
 	log.Println("get all users")
+	// check login or not
+	cookie := c.Cookies("jwt")
+	issuer, _ := controllerlogics.ParseJwt(cookie)
+	if issuer == "" {
+		log.Println("failed show all user: please login")
+		return c.JSON(fiber.Map{
+			"message": "please login",
+		})
+	}
 
 	var users []models.User
 	db.DB.Find(&users)
