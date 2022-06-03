@@ -27,5 +27,5 @@ func ConnectToDb() {
 
 	log.Printf("success db connection: %v", db)
 
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Ground{})
 }
