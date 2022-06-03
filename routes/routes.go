@@ -15,4 +15,10 @@ func Routes(app *fiber.App) {
 	app.Post("/api/login", controllers.Login)
 	app.Post("/api/user", controllers.User)
 	app.Post("/api/logout", controllers.Logout)
+
+	app.Get("api/grounds", controllers.GroundsIndex)
+	app.Post("/api/grounds", controllers.GroundsCreate)
+	app.Get("/api/grounds/:id", controllers.GroundShow)
+	app.Put("/api/grounds/:id", controllers.GroundUpdate)
+	app.Delete("/api/grounds/:id", controllers.GroundDelete)
 }
