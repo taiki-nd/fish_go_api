@@ -11,7 +11,7 @@ type Ground struct {
 	Tell      string    `json:"tell" gorm:"not null; size:256"`
 	Email     string    `json:"email" gorm:"not null; size:256"`
 	Break     string    `json:"break" gorm:"not null; size:256"`
-	Price     int64     `json:"price" gorm:"not null"`
+	Price     string    `json:"price" gorm:"not null; size:256"`
 	Url       string    `json:"url" gorm:"not null; size:256"`
 	Feature   string    `json:"feature" gorm:"not null; size:256"`
 	Rule      string    `json:"rule" gorm:"not null; size:256"`
