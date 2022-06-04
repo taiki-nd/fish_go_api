@@ -51,7 +51,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 
 	log.Println("start to create ground")
 
-	var groundStyle models.GroundAssociation
+	var groundAssoci models.GroundAssociation
 
 	err := c.BodyParser(&groundStyle)
 	if err != nil {
@@ -59,20 +59,19 @@ func GroundsCreate(c *fiber.Ctx) error {
 		return err
 	}
 
-	styles := controllerlogics.GetStyles(groundStyle.Styles)
+	styles := controllerlogics.GetStyles(groundAssoci.Styles)
 
 	ground := models.Ground{
-		Name:    groundStyle.Name,
-		Address: groundStyle.Address,
-		Tell:    groundStyle.Tell,
-		Email:   groundStyle.Email,
-		Break:   groundStyle.Break,
+		Name:    groundAssoci.Name,
+		Tell:    groundAssoci.Tell,
+		Email:   groundAssoci.Email,
+		Break:   groundAssoci.Break,
 		Styles:  styles,
-		Price:   groundStyle.Price,
-		Url:     groundStyle.Url,
-		Feature: groundStyle.Feature,
-		Rule:    groundStyle.Rule,
-		Other:   groundStyle.Other,
+		Price:   groundAssoci.Price,
+		Url:     groundAssoci.Url,
+		Feature: groundAssoci.Feature,
+		Rule:    groundAssoci.Rule,
+		Other:   groundAssoci.Other,
 	}
 
 	db.DB.Create(&ground)
