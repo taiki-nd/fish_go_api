@@ -193,7 +193,7 @@ func GroundDelete(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
 	issuer, _ := controllerlogics.ParseJwt(cookie)
 	if issuer == "" {
-		log.Println("failed delete user: please login")
+		log.Println("failed delete ground: please login")
 		return c.JSON(fiber.Map{
 			"message": "please login",
 		})
