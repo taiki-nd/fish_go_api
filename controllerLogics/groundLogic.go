@@ -15,3 +15,13 @@ func GetGroundFromId(c *fiber.Ctx) models.Ground {
 
 	return ground
 }
+
+func GetStyles(stylesInfo []int) []models.Style {
+	styles := make([]models.Style, len(stylesInfo))
+	for i, styleId := range stylesInfo {
+		styles[i] = models.Style{
+			Id: uint(styleId),
+		}
+	}
+	return styles
+}

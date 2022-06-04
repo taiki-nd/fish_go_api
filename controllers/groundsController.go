@@ -10,6 +10,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type GroundStyle struct {
+	Name    string `json:"name" gorm:"not null; size:256"`
+	Address string `json:"address" gorm:"not null; size:256"`
+	Tell    string `json:"tell" gorm:"not null; size:256"`
+	Email   string `json:"email" gorm:"not null; size:256"`
+	Break   string `json:"break" gorm:"not null; size:256"`
+	Styles  []int  `json:"styles" gorm:"many2many:ground_styles"`
+	Price   string `json:"price" gorm:"not null; size:256"`
+	Url     string `json:"url" gorm:"not null; size:256"`
+	Feature string `json:"feature" gorm:"not null; size:256"`
+	Rule    string `json:"rule" gorm:"not null; size:256"`
+	Other   string `json:"other" gorm:"not null; size:256"`
+}
+
 /*
 	Index ground
 */
@@ -51,13 +65,30 @@ func GroundsCreate(c *fiber.Ctx) error {
 
 	log.Println("start to create ground")
 
-	var ground models.Ground
+	var groundStyle GroundStyle
 
-	err := c.BodyParser(&ground)
+	err := c.BodyParser(&groundStyle)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
 		return err
 	}
+
+	styles := controllerlogics.GetStyles(groundStyle.Styles)
+
+	ground := models.Ground{
+		Name:    groundStyle.Name,
+		Address: groundStyle.Address,
+		Tell:    groundStyle.Tell,
+		Email:   groundStyle.Email,
+		Break:   groundStyle.Break,
+		Styles:  styles,
+		Price:   groundStyle.Price,
+		Url:     groundStyle.Url,
+		Feature: groundStyle.Feature,
+		Rule:    groundStyle.Rule,
+		Other:   groundStyle.Other,
+	}
+
 	db.DB.Create(&ground)
 	log.Printf("finish create ground: %v", ground.Name)
 
