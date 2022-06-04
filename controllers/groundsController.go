@@ -109,7 +109,7 @@ func GroundShow(c *fiber.Ctx) error {
 func GroundUpdate(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
 
-	//check account
+	//check record
 	err := db.DB.First(&ground).Error
 	if err != nil {
 		log.Printf("failed update ground: ground not found: id = %v", ground.Id)
@@ -178,7 +178,7 @@ func GroundUpdate(c *fiber.Ctx) error {
 func GroundDelete(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
 
-	//check account
+	//check record
 	err := db.DB.First(&ground).Error
 	if err != nil {
 		log.Printf("failed delete ground: ground not found: id = %v", ground.Id)
