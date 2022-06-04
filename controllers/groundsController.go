@@ -53,7 +53,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 
 	var groundAssoci models.GroundAssociation
 
-	err := c.BodyParser(&groundStyle)
+	err := c.BodyParser(&groundAssoci)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
 		return err
