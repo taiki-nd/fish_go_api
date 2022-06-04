@@ -209,6 +209,8 @@ func GroundDelete(c *fiber.Ctx) error {
 		})
 	}
 
+	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
+
 	db.DB.Delete(ground)
 	log.Println("success delete ground")
 
