@@ -21,4 +21,10 @@ func Routes(app *fiber.App) {
 	app.Get("/api/grounds/:id", controllers.GroundShow)
 	app.Put("/api/grounds/:id", controllers.GroundUpdate)
 	app.Delete("/api/grounds/:id", controllers.GroundDelete)
+
+	app.Get("api/styles", controllers.StylesIndex)
+	app.Post("/api/styles", controllers.StylesCreate)
+	app.Get("/api/styles/:id", controllers.StyleShow)
+	app.Put("/api/styles/:id", controllers.StyleUpdate)
+	app.Delete("/api/styles/:id", controllers.StyleDelete)
 }
