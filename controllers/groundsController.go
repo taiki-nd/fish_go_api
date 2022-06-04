@@ -82,7 +82,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 }
 
 /*
-	UserShow
+	Show Ground
 */
 func GroundShow(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
@@ -105,7 +105,7 @@ func GroundShow(c *fiber.Ctx) error {
 }
 
 /*
-	UserUpdate
+	Update ground
 */
 func GroundUpdate(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
@@ -154,7 +154,7 @@ func GroundUpdate(c *fiber.Ctx) error {
 }
 
 /*
-	UserDelete
+	Delete ground
 */
 func GroundDelete(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
