@@ -17,7 +17,7 @@ func GroundsIndex(c *fiber.Ctx) error {
 	log.Println("get all grounds")
 
 	var grounds []models.Ground
-	db.DB.Find(&grounds)
+	db.DB.Preload("Styles").Find(&grounds)
 
 	return c.JSON(fiber.Map{
 		"data": grounds,
@@ -97,7 +97,7 @@ func GroundShow(c *fiber.Ctx) error {
 
 	log.Printf("start show ground: id = %v", ground.Id)
 
-	db.DB.Find(&ground)
+	db.DB.Preload("Styles").Find(&ground)
 	log.Printf("show user: id = %v, Name = %v", ground.Id, ground.Name)
 
 	return c.JSON(ground)
