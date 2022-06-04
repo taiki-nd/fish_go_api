@@ -140,16 +140,36 @@ func GroundUpdate(c *fiber.Ctx) error {
 		})
 	}
 
-	err2 := c.BodyParser(&ground)
+	var groundAssoci models.GroundAssociation
+
+	err2 := c.BodyParser(&groundAssoci)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
 		return err2
 	}
 
-	db.DB.Model(&ground).Updates(ground)
+	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
+
+	styles := controllerlogics.GetStyles(groundAssoci.Styles)
+
+	groundForUpdate := models.Ground{
+		Id:      ground.Id,
+		Name:    groundAssoci.Name,
+		Tell:    groundAssoci.Tell,
+		Email:   groundAssoci.Email,
+		Break:   groundAssoci.Break,
+		Styles:  styles,
+		Price:   groundAssoci.Price,
+		Url:     groundAssoci.Url,
+		Feature: groundAssoci.Feature,
+		Rule:    groundAssoci.Rule,
+		Other:   groundAssoci.Other,
+	}
+
+	db.DB.Model(&groundForUpdate).Updates(groundForUpdate)
 	log.Println("success update ground")
 
-	return c.JSON(ground)
+	return c.JSON(groundForUpdate)
 }
 
 /*
