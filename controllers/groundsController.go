@@ -17,7 +17,7 @@ func GroundsIndex(c *fiber.Ctx) error {
 	log.Println("get all grounds")
 
 	var grounds []models.Ground
-	db.DB.Find(&grounds)
+	db.DB.Preload("Styles").Find(&grounds)
 
 	return c.JSON(fiber.Map{
 		"data": grounds,
@@ -51,13 +51,29 @@ func GroundsCreate(c *fiber.Ctx) error {
 
 	log.Println("start to create ground")
 
-	var ground models.Ground
+	var groundAssoci models.GroundAssociation
 
-	err := c.BodyParser(&ground)
+	err := c.BodyParser(&groundAssoci)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
 		return err
 	}
+
+	styles := controllerlogics.GetStyles(groundAssoci.Styles)
+
+	ground := models.Ground{
+		Name:    groundAssoci.Name,
+		Tell:    groundAssoci.Tell,
+		Email:   groundAssoci.Email,
+		Break:   groundAssoci.Break,
+		Styles:  styles,
+		Price:   groundAssoci.Price,
+		Url:     groundAssoci.Url,
+		Feature: groundAssoci.Feature,
+		Rule:    groundAssoci.Rule,
+		Other:   groundAssoci.Other,
+	}
+
 	db.DB.Create(&ground)
 	log.Printf("finish create ground: %v", ground.Name)
 
@@ -65,7 +81,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 }
 
 /*
-	UserShow
+	Show Ground
 */
 func GroundShow(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
@@ -81,19 +97,19 @@ func GroundShow(c *fiber.Ctx) error {
 
 	log.Printf("start show ground: id = %v", ground.Id)
 
-	db.DB.Find(&ground)
+	db.DB.Preload("Styles").Find(&ground)
 	log.Printf("show user: id = %v, Name = %v", ground.Id, ground.Name)
 
 	return c.JSON(ground)
 }
 
 /*
-	UserUpdate
+	Update ground
 */
 func GroundUpdate(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
 
-	//check account
+	//check record
 	err := db.DB.First(&ground).Error
 	if err != nil {
 		log.Printf("failed update ground: ground not found: id = %v", ground.Id)
@@ -124,25 +140,45 @@ func GroundUpdate(c *fiber.Ctx) error {
 		})
 	}
 
-	err2 := c.BodyParser(&ground)
+	var groundAssoci models.GroundAssociation
+
+	err2 := c.BodyParser(&groundAssoci)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
 		return err2
 	}
 
-	db.DB.Model(&ground).Updates(ground)
+	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
+
+	styles := controllerlogics.GetStyles(groundAssoci.Styles)
+
+	groundForUpdate := models.Ground{
+		Id:      ground.Id,
+		Name:    groundAssoci.Name,
+		Tell:    groundAssoci.Tell,
+		Email:   groundAssoci.Email,
+		Break:   groundAssoci.Break,
+		Styles:  styles,
+		Price:   groundAssoci.Price,
+		Url:     groundAssoci.Url,
+		Feature: groundAssoci.Feature,
+		Rule:    groundAssoci.Rule,
+		Other:   groundAssoci.Other,
+	}
+
+	db.DB.Model(&groundForUpdate).Updates(groundForUpdate)
 	log.Println("success update ground")
 
-	return c.JSON(ground)
+	return c.JSON(groundForUpdate)
 }
 
 /*
-	UserDelete
+	Delete ground
 */
 func GroundDelete(c *fiber.Ctx) error {
 	ground := controllerlogics.GetGroundFromId(c)
 
-	//check account
+	//check record
 	err := db.DB.First(&ground).Error
 	if err != nil {
 		log.Printf("failed delete ground: ground not found: id = %v", ground.Id)
@@ -157,7 +193,7 @@ func GroundDelete(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
 	issuer, _ := controllerlogics.ParseJwt(cookie)
 	if issuer == "" {
-		log.Println("failed delete user: please login")
+		log.Println("failed delete ground: please login")
 		return c.JSON(fiber.Map{
 			"message": "please login",
 		})
@@ -172,6 +208,8 @@ func GroundDelete(c *fiber.Ctx) error {
 			"message": "failed delete ground: you need admin or developer permission",
 		})
 	}
+
+	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
 
 	db.DB.Delete(ground)
 	log.Println("success delete ground")
