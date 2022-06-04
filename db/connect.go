@@ -30,6 +30,7 @@ func ConnectToDb() {
 	db.AutoMigrate(
 		&models.User{},
 		&models.Style{},
+		&models.Howto{},
 		&models.Ground{},
 	)
 }
