@@ -25,3 +25,13 @@ func GetStyles(stylesInfo []int) []models.Style {
 	}
 	return styles
 }
+
+func GetHowtos(howtosInfo []int) []models.Howto {
+	howtos := make([]models.Howto, len(howtosInfo))
+	for i, howtoId := range howtosInfo {
+		howtos[i] = models.Howto{
+			Id: uint(howtoId),
+		}
+	}
+	return howtos
+}
