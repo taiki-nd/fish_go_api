@@ -27,4 +27,10 @@ func Routes(app *fiber.App) {
 	app.Get("/api/styles/:id", controllers.StyleShow)
 	app.Put("/api/styles/:id", controllers.StyleUpdate)
 	app.Delete("/api/styles/:id", controllers.StyleDelete)
+
+	app.Get("api/howtos", controllers.HowtosIndex)
+	app.Post("/api/howtos", controllers.HowtosCreate)
+	app.Get("/api/howtos/:id", controllers.HowtoShow)
+	app.Put("/api/howtos/:id", controllers.HowtoUpdate)
+	app.Delete("/api/howtos/:id", controllers.HowtoDelete)
 }
