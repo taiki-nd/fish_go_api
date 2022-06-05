@@ -101,7 +101,7 @@ func UsersCreate(c *fiber.Ctx) error {
 }
 
 /*
-	UserShow
+	Show User
 */
 func UserShow(c *fiber.Ctx) error {
 	user := controllerlogics.GetUserFromId(c)
@@ -134,7 +134,7 @@ func UserShow(c *fiber.Ctx) error {
 }
 
 /*
-	UserUpdate
+	Update User
 */
 func UserUpdate(c *fiber.Ctx) error {
 	user := controllerlogics.GetUserFromId(c)
@@ -183,7 +183,7 @@ func UserUpdate(c *fiber.Ctx) error {
 }
 
 /*
-	UserDelete
+	Delete User
 */
 func UserDelete(c *fiber.Ctx) error {
 	user := controllerlogics.GetUserFromId(c)

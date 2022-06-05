@@ -11,7 +11,7 @@ import (
 )
 
 /*
-	Index style
+	Index Style
 */
 func StylesIndex(c *fiber.Ctx) error {
 	log.Println("get all styles")
@@ -65,7 +65,7 @@ func StylesCreate(c *fiber.Ctx) error {
 }
 
 /*
-	UserShow
+	Show Style
 */
 func StyleShow(c *fiber.Ctx) error {
 	style := controllerlogics.GetStyleFromId(c)
@@ -88,7 +88,7 @@ func StyleShow(c *fiber.Ctx) error {
 }
 
 /*
-	UserUpdate
+	Update Style
 */
 func StyleUpdate(c *fiber.Ctx) error {
 	style := controllerlogics.GetStyleFromId(c)
@@ -137,7 +137,7 @@ func StyleUpdate(c *fiber.Ctx) error {
 }
 
 /*
-	UserDelete
+	Delete Style
 */
 func StyleDelete(c *fiber.Ctx) error {
 	style := controllerlogics.GetStyleFromId(c)
