@@ -31,6 +31,7 @@ func ConnectToDb() {
 		&models.User{},
 		&models.Style{},
 		&models.Howto{},
+		&models.Fish{},
 		&models.Ground{},
 	)
 }
