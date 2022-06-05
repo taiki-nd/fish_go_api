@@ -12,7 +12,7 @@ type Ground struct {
 	Email     string    `json:"email" gorm:"not null; size:256"`
 	Break     string    `json:"break" gorm:"not null; size:256"`
 	Styles    []Style   `json:"styles" gorm:"many2many:ground_styles"`
-	Howtos    []Howto   `json:"howto" gorm:"many2many:ground_howtos"`
+	Howtos    []Howto   `json:"howtos" gorm:"many2many:ground_howtos"`
 	Price     string    `json:"price" gorm:"not null; size:256"`
 	Url       string    `json:"url" gorm:"not null; size:256"`
 	Feature   string    `json:"feature" gorm:"not null; size:256"`
