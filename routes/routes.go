@@ -33,4 +33,10 @@ func Routes(app *fiber.App) {
 	app.Get("/api/howtos/:id", controllers.HowtoShow)
 	app.Put("/api/howtos/:id", controllers.HowtoUpdate)
 	app.Delete("/api/howtos/:id", controllers.HowtoDelete)
+
+	app.Get("api/fishes", controllers.FishesIndex)
+	app.Post("/api/fishes", controllers.FishesCreate)
+	app.Get("/api/fishes/:id", controllers.FishShow)
+	app.Put("/api/fishes/:id", controllers.FishUpdate)
+	app.Delete("/api/fishes/:id", controllers.FishDelete)
 }
