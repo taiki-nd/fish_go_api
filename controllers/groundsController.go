@@ -61,6 +61,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 
 	styles := controllerlogics.GetStyles(groundAssoci.Styles)
 	howtos := controllerlogics.GetHowtos(groundAssoci.Howtos)
+	fishes := controllerlogics.GetFishes(groundAssoci.Fishes)
 
 	ground := models.Ground{
 		Name:    groundAssoci.Name,
@@ -70,6 +71,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 		Break:   groundAssoci.Break,
 		Styles:  styles,
 		Howtos:  howtos,
+		Fishes:  fishes,
 		Price:   groundAssoci.Price,
 		Url:     groundAssoci.Url,
 		Feature: groundAssoci.Feature,

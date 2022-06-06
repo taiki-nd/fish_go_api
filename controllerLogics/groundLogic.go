@@ -35,3 +35,13 @@ func GetHowtos(howtosInfo []int) []models.Howto {
 	}
 	return howtos
 }
+
+func GetFishes(fishesInfo []int) []models.Fish {
+	fishes := make([]models.Fish, len(fishesInfo))
+	for i, fishId := range fishesInfo {
+		fishes[i] = models.Fish{
+			Id: uint(fishId),
+		}
+	}
+	return fishes
+}
