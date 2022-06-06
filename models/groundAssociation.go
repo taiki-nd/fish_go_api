@@ -8,6 +8,7 @@ type GroundAssociation struct {
 	Break   string
 	Styles  []int
 	Howtos  []int
+	Fishes  []int
 	Price   string
 	Url     string
 	Feature string
