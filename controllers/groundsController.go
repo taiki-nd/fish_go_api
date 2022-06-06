@@ -155,9 +155,11 @@ func GroundUpdate(c *fiber.Ctx) error {
 
 	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
 	db.DB.Table("ground_howtos").Where("ground_id = ?", ground.Id).Delete("")
+	db.DB.Table("ground_fishes").Where("ground_id = ?", ground.Id).Delete("")
 
 	styles := controllerlogics.GetStyles(groundAssoci.Styles)
 	howtos := controllerlogics.GetHowtos(groundAssoci.Howtos)
+	fishes := controllerlogics.GetFishes(groundAssoci.Fishes)
 
 	groundForUpdate := models.Ground{
 		Id:      ground.Id,
@@ -168,6 +170,7 @@ func GroundUpdate(c *fiber.Ctx) error {
 		Break:   groundAssoci.Break,
 		Styles:  styles,
 		Howtos:  howtos,
+		Fishes:  fishes,
 		Price:   groundAssoci.Price,
 		Url:     groundAssoci.Url,
 		Feature: groundAssoci.Feature,
