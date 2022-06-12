@@ -39,4 +39,10 @@ func Routes(app *fiber.App) {
 	app.Get("/api/fishes/:id", controllers.FishShow)
 	app.Put("/api/fishes/:id", controllers.FishUpdate)
 	app.Delete("/api/fishes/:id", controllers.FishDelete)
+
+	app.Get("api/ground_comments", controllers.GroundCommentsIndex)
+	app.Post("/api/ground_comments", controllers.GroundCommentsCreate)
+	app.Get("/api/ground_comments/:id", controllers.GroundCommentShow)
+	app.Put("/api/ground_comments/:id", controllers.GroundCommentUpdate)
+	app.Delete("/api/ground_comments/:id", controllers.GroundCommentDelete)
 }
