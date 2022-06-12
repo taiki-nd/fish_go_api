@@ -10,7 +10,7 @@ type GroundComment struct {
 	Content   string    `json:"content" gorm:"not null; size:256"`
 	Rate      int64     `json:"Rate"`
 	Size      int64     `json:"Size"`
-	Nice      int64     `json:"Nice"`
+	Nice      int64     `json:"Nice" gorm:"default:0"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
