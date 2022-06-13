@@ -11,6 +11,7 @@ type GroundComment struct {
 	Rate      int64     `json:"Rate"`
 	Size      int64     `json:"Size"`
 	Nice      int64     `json:"Nice" gorm:"default:0"`
+	GroundId  uint      `json:"ground_id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
