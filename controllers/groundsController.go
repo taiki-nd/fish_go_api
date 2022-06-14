@@ -102,8 +102,8 @@ func GroundShow(c *fiber.Ctx) error {
 
 	log.Printf("start show ground: id = %v", ground.Id)
 
-	db.DB.Preload("Styles").Preload("Howtos").Preload("Fishes").Find(&ground)
-	log.Printf("show user: id = %v, Name = %v", ground.Id, ground.Name)
+	db.DB.Preload("Styles").Preload("Howtos").Preload("Fishes").Preload("GroundComments").Find(&ground)
+	log.Printf("show ground: id = %v, Name = %v", ground.Id, ground.Name)
 
 	return c.JSON(ground)
 }
@@ -224,6 +224,7 @@ func GroundDelete(c *fiber.Ctx) error {
 	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
 	db.DB.Table("ground_howtos").Where("ground_id = ?", ground.Id).Delete("")
 	db.DB.Table("ground_fishes").Where("ground_id = ?", ground.Id).Delete("")
+	db.DB.Table("ground_comments").Where("ground_id = ?", ground.Id).Delete("")
 
 	db.DB.Delete(ground)
 	log.Println("success delete ground")
