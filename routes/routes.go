@@ -45,4 +45,10 @@ func Routes(app *fiber.App) {
 	app.Get("/api/ground_comments/:id", controllers.GroundCommentShow)
 	app.Put("/api/ground_comments/:id", controllers.GroundCommentUpdate)
 	app.Delete("/api/ground_comments/:id", controllers.GroundCommentDelete)
+
+	app.Get("api/comment_replies", controllers.CommentRepliesIndex)
+	app.Post("/api/comment_replies", controllers.CommentRepliesCreate)
+	app.Get("/api/comment_replies/:id", controllers.CommentReplyShow)
+	app.Put("/api/comment_replies/:id", controllers.CommentReplyUpdate)
+	app.Delete("/api/comment_replies/:id", controllers.CommentReplyDelete)
 }
