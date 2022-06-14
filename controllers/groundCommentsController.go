@@ -14,90 +14,90 @@ import (
 	Index groundComment
 */
 func GroundCommentsIndex(c *fiber.Ctx) error {
-	log.Println("get all groundCommments")
+	log.Println("get all groundComments")
 
-	var groundCommments []models.GroundComment
-	db.DB.Find(&groundCommments)
+	var groundComments []models.GroundComment
+	db.DB.Find(&groundComments)
 
 	return c.JSON(fiber.Map{
-		"data": groundCommments,
+		"data": groundComments,
 	})
 }
 
 /*
-	Create groundCommment
+	Create groundComment
 */
 func GroundCommentsCreate(c *fiber.Ctx) error {
-	log.Println("start to create groundCommment")
+	log.Println("start to create groundComment")
 
-	var groundCommment models.GroundComment
+	var groundComment models.GroundComment
 
-	err := c.BodyParser(&groundCommment)
+	err := c.BodyParser(&groundComment)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
 		return err
 	}
-	db.DB.Create(&groundCommment)
-	log.Printf("finish create groundCommment: %v", groundCommment.Id)
+	db.DB.Create(&groundComment)
+	log.Printf("finish create groundComment: %v", groundComment.Id)
 
-	return c.JSON(groundCommment)
+	return c.JSON(groundComment)
 }
 
 /*
 	Show groundComment
 */
 func GroundCommentShow(c *fiber.Ctx) error {
-	groundCommment := controllerlogics.GetGroundCommentFromId(c)
+	groundComment := controllerlogics.GetGroundCommentFromId(c)
 
-	//check groundCommment
-	err := db.DB.First(&groundCommment).Error
+	//check groundComment
+	err := db.DB.First(&groundComment).Error
 	if err != nil {
-		log.Printf("failed show groundCommment: groundCommment not found: id = %v", groundCommment.Id)
+		log.Printf("failed show groundComment: groundComment not found: id = %v", groundComment.Id)
 		return c.JSON(fiber.Map{
-			"message": fmt.Sprintf("failed show groundCommment: groundCommment not found: id = %v", groundCommment.Id),
+			"message": fmt.Sprintf("failed show groundComment: groundComment not found: id = %v", groundComment.Id),
 		})
 	}
 
-	log.Printf("start show groundCommment: id = %v", groundCommment.Id)
+	log.Printf("start show groundComment: id = %v", groundComment.Id)
 
-	db.DB.Find(&groundCommment)
-	log.Printf("show user: id = %v, groundCommment = %v", groundCommment.Id, groundCommment.Id)
+	db.DB.Find(&groundComment)
+	log.Printf("show user: id = %v, groundComment = %v", groundComment.Id, groundComment.Id)
 
-	return c.JSON(groundCommment)
+	return c.JSON(groundComment)
 }
 
 /*
 	Update groundComment
 */
 func GroundCommentUpdate(c *fiber.Ctx) error {
-	groundCommment := controllerlogics.GetGroundCommentFromId(c)
+	groundComment := controllerlogics.GetGroundCommentFromId(c)
 
-	log.Printf("start update groundCommment: id = %v", groundCommment.Id)
+	log.Printf("start update groundComment: id = %v", groundComment.Id)
 
-	err2 := c.BodyParser(&groundCommment)
+	err2 := c.BodyParser(&groundComment)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
 		return err2
 	}
 
-	db.DB.Model(&groundCommment).Updates(groundCommment)
-	log.Println("success update groundCommment")
+	db.DB.Model(&groundComment).Updates(groundComment)
+	log.Println("success update groundComment")
 
-	return c.JSON(groundCommment)
+	return c.JSON(groundComment)
 }
 
 /*
 	Delete groundComment
 */
 func GroundCommentDelete(c *fiber.Ctx) error {
-	groundCommment := controllerlogics.GetGroundCommentFromId(c)
+	groundComment := controllerlogics.GetGroundCommentFromId(c)
 
-	log.Printf("start delete groundCommment: id = %v", groundCommment.Id)
+	log.Printf("start delete groundComment: id = %v", groundComment.Id)
 
-	db.DB.Delete(groundCommment)
-	log.Println("success delete groundCommment")
+	db.DB.Delete(groundComment)
+	log.Println("success delete groundComment")
 
 	return c.JSON(fiber.Map{
-		"message": "success delete groundCommment",
+		"message": "success delete groundComment",
 	})
 }
