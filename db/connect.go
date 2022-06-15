@@ -29,6 +29,7 @@ func ConnectToDb() {
 
 	db.AutoMigrate(
 		&models.User{},
+		&models.CommentReply{},
 		&models.GroundComment{},
 		&models.Style{},
 		&models.Howto{},
