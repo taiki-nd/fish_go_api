@@ -94,6 +94,7 @@ func GroundCommentDelete(c *fiber.Ctx) error {
 
 	log.Printf("start delete groundComment: id = %v", groundComment.Id)
 
+	db.DB.Table("comment_replies").Where("ground_comment_id = ?", groundComment.Id).Delete("")
 	db.DB.Delete(groundComment)
 	log.Println("success delete groundComment")
 
