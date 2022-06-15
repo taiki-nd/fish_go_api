@@ -60,7 +60,7 @@ func GroundCommentShow(c *fiber.Ctx) error {
 
 	log.Printf("start show groundComment: id = %v", groundComment.Id)
 
-	db.DB.Find(&groundComment)
+	db.DB.Preload("CommentReplies").Find(&groundComment)
 	log.Printf("show user: id = %v, groundComment = %v", groundComment.Id, groundComment.Id)
 
 	return c.JSON(groundComment)
