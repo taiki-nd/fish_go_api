@@ -17,7 +17,7 @@ func GroundCommentsIndex(c *fiber.Ctx) error {
 	log.Println("get all groundComments")
 
 	var groundComments []models.GroundComment
-	db.DB.Find(&groundComments)
+	db.DB.Preload("CommentReplies").Find(&groundComments)
 
 	return c.JSON(fiber.Map{
 		"data": groundComments,
