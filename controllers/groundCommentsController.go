@@ -17,7 +17,7 @@ func GroundCommentsIndex(c *fiber.Ctx) error {
 	log.Println("get all groundComments")
 
 	var groundComments []models.GroundComment
-	db.DB.Find(&groundComments)
+	db.DB.Preload("CommentReplies").Find(&groundComments)
 
 	return c.JSON(fiber.Map{
 		"data": groundComments,
@@ -60,7 +60,7 @@ func GroundCommentShow(c *fiber.Ctx) error {
 
 	log.Printf("start show groundComment: id = %v", groundComment.Id)
 
-	db.DB.Find(&groundComment)
+	db.DB.Preload("CommentReplies").Find(&groundComment)
 	log.Printf("show user: id = %v, groundComment = %v", groundComment.Id, groundComment.Id)
 
 	return c.JSON(groundComment)
@@ -94,6 +94,7 @@ func GroundCommentDelete(c *fiber.Ctx) error {
 
 	log.Printf("start delete groundComment: id = %v", groundComment.Id)
 
+	db.DB.Table("comment_replies").Where("ground_comment_id = ?", groundComment.Id).Delete("")
 	db.DB.Delete(groundComment)
 	log.Println("success delete groundComment")
 
