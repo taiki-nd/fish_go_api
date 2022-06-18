@@ -11,7 +11,11 @@ func Logging(logFile string) {
 	day := time.Now()
 	const layout = "2006-01-02"
 
-	logfile, err := os.OpenFile(logFile+"-"+day.Format(layout)+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	nowUTC := day.UTC()
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	dayJST := nowUTC.In(jst)
+
+	logfile, err := os.OpenFile(logFile+"-"+dayJST.Format(layout)+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("file=logFile err=%s", err.Error())
 	}
