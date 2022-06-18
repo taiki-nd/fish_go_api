@@ -4,10 +4,18 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 )
 
 func Logging(logFile string) {
-	logfile, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	day := time.Now()
+	const layout = "2006-01-02"
+
+	nowUTC := day.UTC()
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	dayJST := nowUTC.In(jst)
+
+	logfile, err := os.OpenFile(logFile+"-"+dayJST.Format(layout)+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("file=logFile err=%s", err.Error())
 	}
