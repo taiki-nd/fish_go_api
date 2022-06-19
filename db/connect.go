@@ -13,7 +13,7 @@ import (
 var DB *gorm.DB
 
 func ConnectToDb() {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True",
 		config.Config.UserDevelop, config.Config.PasswordDevelop,
 		config.Config.HostDevelop, config.Config.PortDevelop,
 		config.Config.NameDevelop)
