@@ -51,4 +51,6 @@ func Routes(app *fiber.App) {
 	app.Get("/api/comment_replies/:id", controllers.CommentReplyShow)
 	app.Put("/api/comment_replies/:id", controllers.CommentReplyUpdate)
 	app.Delete("/api/comment_replies/:id", controllers.CommentReplyDelete)
+
+	app.Post("api/image", controllers.ImageUpload)
 }
