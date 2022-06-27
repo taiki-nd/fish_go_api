@@ -15,7 +15,7 @@ func Logging(logFile string) {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	dayJST := nowUTC.In(jst)
 
-	logfile, err := os.OpenFile(logFile+"-"+dayJST.Format(layout)+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logfile, err := os.OpenFile(logFile+"_"+dayJST.Format(layout)+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("file=logFile err=%s", err.Error())
 	}
