@@ -8,13 +8,15 @@ import (
 )
 
 type ConfigList struct {
-	Logfile         string
-	SqlDevelop      string
-	HostDevelop     string
-	PortDevelop     string
-	NameDevelop     string
-	UserDevelop     string
-	PasswordDevelop string
+	Logfile            string
+	SqlDevelop         string
+	HostDevelop        string
+	PortDevelop        string
+	NameDevelop        string
+	UserDevelop        string
+	PasswordDevelop    string
+	GcsBucketNameLocal string
+	GcsObjectPathLocal string
 }
 
 var Config ConfigList
@@ -27,12 +29,14 @@ func init() {
 	}
 
 	Config = ConfigList{
-		Logfile:         cfg.Section("fish_go").Key("log_file").String(),
-		SqlDevelop:      cfg.Section("db_development").Key("sql_develop").String(),
-		HostDevelop:     cfg.Section("db_development").Key("host_develop").String(),
-		PortDevelop:     cfg.Section("db_development").Key("port_develop").String(),
-		NameDevelop:     cfg.Section("db_development").Key("name_develop").String(),
-		UserDevelop:     cfg.Section("db_development").Key("user_develop").String(),
-		PasswordDevelop: cfg.Section("db_development").Key("password_develop").String(),
+		Logfile:            cfg.Section("fish_go").Key("log_file").String(),
+		SqlDevelop:         cfg.Section("db_development").Key("sql_develop").String(),
+		HostDevelop:        cfg.Section("db_development").Key("host_develop").String(),
+		PortDevelop:        cfg.Section("db_development").Key("port_develop").String(),
+		NameDevelop:        cfg.Section("db_development").Key("name_develop").String(),
+		UserDevelop:        cfg.Section("db_development").Key("user_develop").String(),
+		PasswordDevelop:    cfg.Section("db_development").Key("password_develop").String(),
+		GcsBucketNameLocal: cfg.Section("gcp").Key("gcs_bucket_name").String(),
+		GcsObjectPathLocal: cfg.Section("gcp").Key("gcs_object_path").String(),
 	}
 }
