@@ -20,6 +20,7 @@ type Ground struct {
 	Rule           string          `json:"rule" gorm:"not null; size:256"`
 	Other          string          `json:"other" gorm:"not null; size:256"`
 	ImageUrl       string          `json:"image_url" gorm:"size:256"`
+	Filename       string          `json:"filename" gorm:"size:256"`
 	GroundComments []GroundComment `json:"ground_comments" gorm:"foreignKey:GroundId"`
 	CreatedAt      time.Time       `json:"created_at"`
 	UpdatedAt      time.Time       `json:"updated_at"`
