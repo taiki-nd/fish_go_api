@@ -18,6 +18,9 @@ import (
 	"google.golang.org/api/option"
 )
 
+/*
+	upload image to GCS
+*/
 func ImageUpload(c *fiber.Ctx) error {
 	log.Println("start to upload image")
 	file, err := c.FormFile("image")
@@ -150,6 +153,9 @@ func ImageUpload(c *fiber.Ctx) error {
 	})
 }
 
+/*
+	delete image from GCS
+*/
 func ImageDelete(filename string) string {
 	log.Printf("start to delete image form GCS: %v", filename)
 
