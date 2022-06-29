@@ -92,7 +92,26 @@ func CommentReplyUpdate(c *fiber.Ctx) error {
 func CommentReplyDelete(c *fiber.Ctx) error {
 	commentReply := controllerlogics.GetCommentReplyFromId(c)
 
+	//check record
+	err := db.DB.First(&commentReply).Error
+	if err != nil {
+		log.Printf("failed delete commentReply: commentReply not found: id = %v", commentReply.Id)
+		return c.JSON(fiber.Map{
+			"message": fmt.Sprintf("failed delete commentReply: commentReply not found: id = %v", commentReply.Id),
+		})
+	}
+
 	log.Printf("start delete commentReply: id = %v", commentReply.Id)
+
+	if commentReply.Filename != "" {
+		err := ImageDelete(commentReply.Filename)
+		if err != "" {
+			log.Println(err)
+			c.JSON(fiber.Map{
+				"message": err,
+			})
+		}
+	}
 
 	db.DB.Delete(commentReply)
 	log.Println("success delete commentReply")

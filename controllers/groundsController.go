@@ -226,6 +226,16 @@ func GroundDelete(c *fiber.Ctx) error {
 	db.DB.Table("ground_fishes").Where("ground_id = ?", ground.Id).Delete("")
 	db.DB.Table("ground_comments").Where("ground_id = ?", ground.Id).Delete("")
 
+	if ground.Filename != "" {
+		err := ImageDelete(ground.Filename)
+		if err != "" {
+			log.Println(err)
+			c.JSON(fiber.Map{
+				"message": err,
+			})
+		}
+	}
+
 	db.DB.Delete(ground)
 	log.Println("success delete ground")
 
