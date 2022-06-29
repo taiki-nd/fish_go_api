@@ -145,6 +145,42 @@ func ImageUpload(c *fiber.Ctx) error {
 
 	log.Println("Success to upload image")
 	return c.JSON(fiber.Map{
-		"url": objectPath + filename,
+		"url":      objectPath + filename,
+		"filename": filename,
 	})
+}
+
+func ImageDelete(filename string) string {
+	log.Printf("start to delete image form GCS: %v", filename)
+
+	jsonPath := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile(jsonPath))
+	if err != nil {
+		log.Printf("failed to create client: %s", err)
+		return fmt.Sprintf("failed to create client: %s", err)
+	}
+	defer client.Close()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+
+	bucketName := config.Config.GcsBucketNameLocal
+
+	o := client.Bucket(bucketName).Object(filename)
+
+	attrs, err := o.Attrs(ctx)
+	if err != nil {
+		log.Printf("object.Attrs: %v", err)
+		return fmt.Sprintf("object.Attrs: %v", err)
+	}
+	o = o.If(storage.Conditions{GenerationMatch: attrs.Generation})
+
+	err = o.Delete(ctx)
+	if err != nil {
+		log.Printf("Object.Delete: %v", err)
+		return fmt.Sprintf("Object.Delete: %v", err)
+	}
+
+	return "success to delete image"
 }
