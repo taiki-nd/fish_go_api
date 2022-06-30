@@ -92,7 +92,27 @@ func GroundCommentUpdate(c *fiber.Ctx) error {
 func GroundCommentDelete(c *fiber.Ctx) error {
 	groundComment := controllerlogics.GetGroundCommentFromId(c)
 
+	//check record
+	err := db.DB.First(&groundComment).Error
+	if err != nil {
+		log.Printf("failed delete groundComment: groundComment not found: id = %v", groundComment.Id)
+		return c.JSON(fiber.Map{
+			"message": fmt.Sprintf("failed delete groundComment: groundComment not found: id = %v", groundComment.Id),
+		})
+	}
+
 	log.Printf("start delete groundComment: id = %v", groundComment.Id)
+	log.Println(groundComment.Filename)
+
+	if groundComment.Filename != "" {
+		err := ImageDelete(groundComment.Filename)
+		if err != "" {
+			log.Println(err)
+			c.JSON(fiber.Map{
+				"message": err,
+			})
+		}
+	}
 
 	db.DB.Table("comment_replies").Where("ground_comment_id = ?", groundComment.Id).Delete("")
 	db.DB.Delete(groundComment)

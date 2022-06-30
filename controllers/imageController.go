@@ -3,10 +3,9 @@ package controllers
 import (
 	"context"
 	"fish_go_api/config"
+	"fish_go_api/controllerlogics"
 	"fmt"
 	"image"
-	"image/jpeg"
-	"image/png"
 	"io"
 	"log"
 	"os"
@@ -14,10 +13,12 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nfnt/resize"
 	"google.golang.org/api/option"
 )
 
+/*
+	upload image to GCS
+*/
 func ImageUpload(c *fiber.Ctx) error {
 	log.Println("start to upload image")
 	file, err := c.FormFile("image")
@@ -48,58 +49,15 @@ func ImageUpload(c *fiber.Ctx) error {
 	}
 	fileData.Close()
 
-	fmt.Println("width:", img.Bounds().Dx())
-	fmt.Println("height:", img.Bounds().Dy())
-
+	// 画像のリサイズ
 	if img.Bounds().Dx() > 800 {
-		log.Println("start to resize image")
-		const width = 800
-		const height = 0
-		resizedImg := resize.Resize(width, height, img, resize.NearestNeighbor)
-
-		osPath := "uploads/" + filename
-		output, err := os.Create(osPath)
+		osPath, err := controllerlogics.ResizeImg(img, fileData, data, filename)
 		if err != nil {
-			log.Printf("failed to create %v: %v", osPath, err)
 			return c.JSON(fiber.Map{
-				"message": fmt.Sprintf("failed to create %v: %v", osPath, err),
+				"message": fmt.Sprintf("failed to resize image: %v", err),
 			})
-		}
-
-		switch data {
-		case "png":
-			err := png.Encode(output, resizedImg)
-			if err != nil {
-				log.Printf("failed to encode image: %v", err)
-				return c.JSON(fiber.Map{
-					"message": fmt.Sprintf("failed to encode image: %v", err),
-				})
-			}
-		case "jpeg", "jpg":
-			opts := &jpeg.Options{Quality: 100}
-			err := jpeg.Encode(output, resizedImg, opts)
-			if err != nil {
-				log.Printf("failed to encode image: %v", err)
-				return c.JSON(fiber.Map{
-					"message": fmt.Sprintf("failed to encode image: %v", err),
-				})
-			}
-		default:
-			err := png.Encode(output, resizedImg)
-			if err != nil {
-				log.Printf("failed to encode image: %v", err)
-				return c.JSON(fiber.Map{
-					"message": fmt.Sprintf("failed to encode image: %v", err),
-				})
-			}
 		}
 		fileData, err = os.Open(osPath)
-		if err != nil {
-			log.Printf("failed to open %v: %v", osPath, err)
-			return c.JSON(fiber.Map{
-				"message": fmt.Sprintf("failed to open %v: %v", osPath, err),
-			})
-		}
 	}
 
 	log.Println("start to upload image to GCS")
@@ -145,6 +103,45 @@ func ImageUpload(c *fiber.Ctx) error {
 
 	log.Println("Success to upload image")
 	return c.JSON(fiber.Map{
-		"url": objectPath + filename,
+		"url":      objectPath + filename,
+		"filename": filename,
 	})
+}
+
+/*
+	delete image from GCS
+*/
+func ImageDelete(filename string) string {
+	log.Printf("start to delete image form GCS: %v", filename)
+
+	jsonPath := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile(jsonPath))
+	if err != nil {
+		log.Printf("failed to create client: %s", err)
+		return fmt.Sprintf("failed to create client: %s", err)
+	}
+	defer client.Close()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+
+	bucketName := config.Config.GcsBucketNameLocal
+
+	o := client.Bucket(bucketName).Object(filename)
+
+	attrs, err := o.Attrs(ctx)
+	if err != nil {
+		log.Printf("object.Attrs: %v", err)
+		return fmt.Sprintf("object.Attrs: %v", err)
+	}
+	o = o.If(storage.Conditions{GenerationMatch: attrs.Generation})
+
+	err = o.Delete(ctx)
+	if err != nil {
+		log.Printf("Object.Delete: %v", err)
+		return fmt.Sprintf("Object.Delete: %v", err)
+	}
+
+	return "success to delete image"
 }
