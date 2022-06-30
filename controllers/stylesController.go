@@ -20,7 +20,8 @@ func StylesIndex(c *fiber.Ctx) error {
 	db.DB.Find(&styles)
 
 	return c.JSON(fiber.Map{
-		"data": styles,
+		"status": true,
+		"data":   styles,
 	})
 }
 
@@ -35,6 +36,7 @@ func StylesCreate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed create style: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -45,6 +47,7 @@ func StylesCreate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed create style: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed create style: you need admin or developer permission",
 		})
 	}
@@ -56,12 +59,18 @@ func StylesCreate(c *fiber.Ctx) error {
 	err := c.BodyParser(&style)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
-		return err
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("POST method error: %v", err),
+		})
 	}
 	db.DB.Create(&style)
 	log.Printf("finish create style: %v", style.Style)
 
-	return c.JSON(style)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   style,
+	})
 }
 
 /*
@@ -75,6 +84,7 @@ func StyleShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed show style: style not found: id = %v", style.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed show style: style not found: id = %v", style.Id),
 		})
 	}
@@ -84,7 +94,10 @@ func StyleShow(c *fiber.Ctx) error {
 	db.DB.Find(&style)
 	log.Printf("show user: id = %v, style = %v", style.Id, style.Style)
 
-	return c.JSON(style)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   style,
+	})
 }
 
 /*
@@ -98,6 +111,7 @@ func StyleUpdate(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed update style: style not found: id = %v", style.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed update style: style not found: id = %v", style.Id),
 		})
 	}
@@ -110,6 +124,7 @@ func StyleUpdate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed update style: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -120,6 +135,7 @@ func StyleUpdate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed update style: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed update style: you need admin or developer permission",
 		})
 	}
@@ -127,13 +143,18 @@ func StyleUpdate(c *fiber.Ctx) error {
 	err2 := c.BodyParser(&style)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
-		return err2
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("put method error: %v", err2)})
 	}
 
 	db.DB.Model(&style).Updates(style)
 	log.Println("success update style")
 
-	return c.JSON(style)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   style,
+	})
 }
 
 /*
@@ -147,6 +168,7 @@ func StyleDelete(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed delete style: style not found: id = %v", style.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed delete style: style not found: id = %v", style.Id),
 		})
 	}
@@ -159,6 +181,7 @@ func StyleDelete(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed delete user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -169,6 +192,7 @@ func StyleDelete(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed delete style: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed delete style: you need admin or developer permission",
 		})
 	}
@@ -177,6 +201,7 @@ func StyleDelete(c *fiber.Ctx) error {
 	log.Println("success delete style")
 
 	return c.JSON(fiber.Map{
+		"status":  true,
 		"message": "success delete style",
 	})
 }
