@@ -25,6 +25,7 @@ func ImageUpload(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("uploads images error: %s", err)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed to upload image",
 		})
 	}
@@ -35,6 +36,7 @@ func ImageUpload(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed to open image: %s", err)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed to open image",
 		})
 	}
@@ -44,6 +46,7 @@ func ImageUpload(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed to decode image: %v", err)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed to decode image: %v", err),
 		})
 	}
@@ -54,6 +57,7 @@ func ImageUpload(c *fiber.Ctx) error {
 		osPath, err := controllerlogics.ResizeImg(img, fileData, data, filename)
 		if err != nil {
 			return c.JSON(fiber.Map{
+				"status":  false,
 				"message": fmt.Sprintf("failed to resize image: %v", err),
 			})
 		}
@@ -68,6 +72,7 @@ func ImageUpload(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed to create client: %s", err)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed to create client: %s", err),
 		})
 	}
@@ -84,11 +89,13 @@ func ImageUpload(c *fiber.Ctx) error {
 	wc := o.NewWriter(ctx)
 	if _, err := io.Copy(wc, fileData); err != nil {
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("io.Copy: %v", err),
 		})
 	}
 	if err := wc.Close(); err != nil {
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("Writer.Close: %v", err),
 		})
 	}
@@ -97,12 +104,14 @@ func ImageUpload(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed to remove uploads/%v: %v", filename, err)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed to remove uploads/%v: %v", filename, err),
 		})
 	}
 
 	log.Println("Success to upload image")
 	return c.JSON(fiber.Map{
+		"status":   true,
 		"url":      objectPath + filename,
 		"filename": filename,
 	})

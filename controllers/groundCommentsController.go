@@ -20,7 +20,8 @@ func GroundCommentsIndex(c *fiber.Ctx) error {
 	db.DB.Preload("CommentReplies").Find(&groundComments)
 
 	return c.JSON(fiber.Map{
-		"data": groundComments,
+		"status": true,
+		"data":   groundComments,
 	})
 }
 
@@ -35,12 +36,17 @@ func GroundCommentsCreate(c *fiber.Ctx) error {
 	err := c.BodyParser(&groundComment)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
-		return err
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("POST method error: %v", err)})
 	}
 	db.DB.Create(&groundComment)
 	log.Printf("finish create groundComment: %v", groundComment.Id)
 
-	return c.JSON(groundComment)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   groundComment,
+	})
 }
 
 /*
@@ -54,6 +60,7 @@ func GroundCommentShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed show groundComment: groundComment not found: id = %v", groundComment.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed show groundComment: groundComment not found: id = %v", groundComment.Id),
 		})
 	}
@@ -63,7 +70,10 @@ func GroundCommentShow(c *fiber.Ctx) error {
 	db.DB.Preload("CommentReplies").Find(&groundComment)
 	log.Printf("show user: id = %v, groundComment = %v", groundComment.Id, groundComment.Id)
 
-	return c.JSON(groundComment)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   groundComment,
+	})
 }
 
 /*
@@ -77,13 +87,18 @@ func GroundCommentUpdate(c *fiber.Ctx) error {
 	err2 := c.BodyParser(&groundComment)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
-		return err2
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("put method error: %v", err2)})
 	}
 
 	db.DB.Model(&groundComment).Updates(groundComment)
 	log.Println("success update groundComment")
 
-	return c.JSON(groundComment)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   groundComment,
+	})
 }
 
 /*
@@ -97,6 +112,7 @@ func GroundCommentDelete(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed delete groundComment: groundComment not found: id = %v", groundComment.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed delete groundComment: groundComment not found: id = %v", groundComment.Id),
 		})
 	}
@@ -109,6 +125,7 @@ func GroundCommentDelete(c *fiber.Ctx) error {
 		if err != "" {
 			log.Println(err)
 			c.JSON(fiber.Map{
+				"status":  false,
 				"message": err,
 			})
 		}
@@ -119,6 +136,7 @@ func GroundCommentDelete(c *fiber.Ctx) error {
 	log.Println("success delete groundComment")
 
 	return c.JSON(fiber.Map{
+		"status":  true,
 		"message": "success delete groundComment",
 	})
 }

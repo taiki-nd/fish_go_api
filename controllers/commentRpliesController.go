@@ -20,7 +20,8 @@ func CommentRepliesIndex(c *fiber.Ctx) error {
 	db.DB.Find(&commentReplies)
 
 	return c.JSON(fiber.Map{
-		"data": commentReplies,
+		"status": true,
+		"data":   commentReplies,
 	})
 }
 
@@ -35,12 +36,18 @@ func CommentRepliesCreate(c *fiber.Ctx) error {
 	err := c.BodyParser(&commentReply)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
-		return err
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("POST method error: %v", err),
+		})
 	}
 	db.DB.Create(&commentReply)
 	log.Printf("finish create commentReply: %v", commentReply.Id)
 
-	return c.JSON(commentReply)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   commentReply,
+	})
 }
 
 /*
@@ -54,6 +61,7 @@ func CommentReplyShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed show commentReply: commentReply not found: id = %v", commentReply.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed show commentReply: commentReply not found: id = %v", commentReply.Id),
 		})
 	}
@@ -63,7 +71,10 @@ func CommentReplyShow(c *fiber.Ctx) error {
 	db.DB.Find(&commentReply)
 	log.Printf("show user: id = %v, commentReply = %v", commentReply.Id, commentReply.Id)
 
-	return c.JSON(commentReply)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   commentReply,
+	})
 }
 
 /*
@@ -77,13 +88,18 @@ func CommentReplyUpdate(c *fiber.Ctx) error {
 	err2 := c.BodyParser(&commentReply)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
-		return err2
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("put method error: %v", err2)})
 	}
 
 	db.DB.Model(&commentReply).Updates(commentReply)
 	log.Println("success update commentReply")
 
-	return c.JSON(commentReply)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   commentReply,
+	})
 }
 
 /*
@@ -97,6 +113,7 @@ func CommentReplyDelete(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed delete commentReply: commentReply not found: id = %v", commentReply.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed delete commentReply: commentReply not found: id = %v", commentReply.Id),
 		})
 	}
@@ -108,6 +125,7 @@ func CommentReplyDelete(c *fiber.Ctx) error {
 		if err != "" {
 			log.Println(err)
 			c.JSON(fiber.Map{
+				"status":  false,
 				"message": err,
 			})
 		}
@@ -117,6 +135,7 @@ func CommentReplyDelete(c *fiber.Ctx) error {
 	log.Println("success delete commentReply")
 
 	return c.JSON(fiber.Map{
+		"status":  true,
 		"message": "success delete commentReply",
 	})
 }

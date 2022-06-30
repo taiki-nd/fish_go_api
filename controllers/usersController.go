@@ -22,6 +22,7 @@ func UsersIndex(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed show all user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -30,7 +31,8 @@ func UsersIndex(c *fiber.Ctx) error {
 	db.DB.Find(&users)
 
 	return c.JSON(fiber.Map{
-		"data": users,
+		"status": true,
+		"data":   users,
 	})
 }
 
@@ -46,6 +48,7 @@ func UsersCreate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed create user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -56,6 +59,7 @@ func UsersCreate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" {
 		log.Println("failed create user: you need admin permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed create user: you need admin permission",
 		})
 	}
@@ -65,7 +69,10 @@ func UsersCreate(c *fiber.Ctx) error {
 	err := c.BodyParser(&data)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
-		return err
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("POST method error: %v", err),
+		})
 	}
 
 	// check email unique
@@ -74,6 +81,7 @@ func UsersCreate(c *fiber.Ctx) error {
 	if createdUser.Id != 0 {
 		log.Printf("failed create user: exists account: mail = %v", data["email"])
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed create user: exists account: mail = %v", data["email"]),
 		})
 	}
@@ -82,6 +90,7 @@ func UsersCreate(c *fiber.Ctx) error {
 		c.Status(400)
 		log.Println("password & password_confirm dose not match.")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "password & password_confirm dose not match.",
 		})
 	}
@@ -97,7 +106,10 @@ func UsersCreate(c *fiber.Ctx) error {
 	db.DB.Create(&user)
 	log.Printf("finish create user: %v %v", user.FirstName, user.LastName)
 
-	return c.JSON(user)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   user,
+	})
 }
 
 /*
@@ -111,6 +123,7 @@ func UserShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed show user: user not found: id = %v", user.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed show user: user not found: id = %v", user.Id),
 		})
 	}
@@ -123,6 +136,7 @@ func UserShow(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed show user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -130,7 +144,10 @@ func UserShow(c *fiber.Ctx) error {
 	db.DB.Find(&user)
 	log.Printf("show user: id = %v", user.Id)
 
-	return c.JSON(user)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   user,
+	})
 }
 
 /*
@@ -144,6 +161,7 @@ func UserUpdate(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed update user: user not found: id = %v", user.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed update user: user not found: id = %v", user.Id),
 		})
 	}
@@ -156,6 +174,7 @@ func UserUpdate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed update user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -166,6 +185,7 @@ func UserUpdate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" {
 		log.Println("failed update user: you need admin permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed update user: you need admin permission",
 		})
 	}
@@ -173,13 +193,18 @@ func UserUpdate(c *fiber.Ctx) error {
 	err2 := c.BodyParser(&user)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
-		return err2
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("put method error: %v", err2)})
 	}
 
 	db.DB.Model(&user).Updates(user)
 	log.Println("success update user")
 
-	return c.JSON(user)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   user,
+	})
 }
 
 /*
@@ -193,6 +218,7 @@ func UserDelete(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed delete user: user not found: id = %v", user.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed delete user: user not found: id = %v", user.Id),
 		})
 	}
@@ -205,6 +231,7 @@ func UserDelete(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed delete user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -215,6 +242,7 @@ func UserDelete(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" {
 		log.Println("failed delete user: you need admin permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed delete user: you need admin permission",
 		})
 	}
@@ -223,6 +251,7 @@ func UserDelete(c *fiber.Ctx) error {
 	log.Println("success delete user")
 
 	return c.JSON(fiber.Map{
+		"status":  true,
 		"message": "success delete user",
 	})
 }
