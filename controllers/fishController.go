@@ -20,7 +20,8 @@ func FishesIndex(c *fiber.Ctx) error {
 	db.DB.Find(&fishes)
 
 	return c.JSON(fiber.Map{
-		"data": fishes,
+		"status": true,
+		"data":   fishes,
 	})
 }
 
@@ -35,6 +36,7 @@ func FishesCreate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed create fish: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -45,6 +47,7 @@ func FishesCreate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed create fish: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed create fish: you need admin or developer permission",
 		})
 	}
@@ -61,7 +64,10 @@ func FishesCreate(c *fiber.Ctx) error {
 	db.DB.Create(&fish)
 	log.Printf("finish create fish: %v", fish.Fish)
 
-	return c.JSON(fish)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   fish,
+	})
 }
 
 /*
@@ -75,6 +81,7 @@ func FishShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed show fish: fish not found: id = %v", fish.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed show fish: fish not found: id = %v", fish.Id),
 		})
 	}
@@ -84,7 +91,10 @@ func FishShow(c *fiber.Ctx) error {
 	db.DB.Find(&fish)
 	log.Printf("show user: id = %v, fish = %v", fish.Id, fish.Fish)
 
-	return c.JSON(fish)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   fish,
+	})
 }
 
 /*
@@ -98,6 +108,7 @@ func FishUpdate(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed update fish: fish not found: id = %v", fish.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed update fish: fish not found: id = %v", fish.Id),
 		})
 	}
@@ -110,6 +121,7 @@ func FishUpdate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed update fish: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -120,6 +132,7 @@ func FishUpdate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed update fish: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed update fish: you need admin or developer permission",
 		})
 	}
@@ -127,13 +140,19 @@ func FishUpdate(c *fiber.Ctx) error {
 	err2 := c.BodyParser(&fish)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
-		return err2
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("put method error: %v", err2),
+		})
 	}
 
 	db.DB.Model(&fish).Updates(fish)
 	log.Println("success update fish")
 
-	return c.JSON(fish)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   fish,
+	})
 }
 
 /*
@@ -147,6 +166,7 @@ func FishDelete(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed delete fish: fish not found: id = %v", fish.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed delete fish: fish not found: id = %v", fish.Id),
 		})
 	}
@@ -159,6 +179,7 @@ func FishDelete(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed delete user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -169,6 +190,7 @@ func FishDelete(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed delete fish: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed delete fish: you need admin or developer permission",
 		})
 	}
@@ -177,6 +199,7 @@ func FishDelete(c *fiber.Ctx) error {
 	log.Println("success delete fish")
 
 	return c.JSON(fiber.Map{
+		"status":  true,
 		"message": "success delete fish",
 	})
 }
