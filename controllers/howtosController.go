@@ -20,7 +20,8 @@ func HowtosIndex(c *fiber.Ctx) error {
 	db.DB.Find(&howtos)
 
 	return c.JSON(fiber.Map{
-		"data": howtos,
+		"status": true,
+		"data":   howtos,
 	})
 }
 
@@ -35,6 +36,7 @@ func HowtosCreate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed create howto: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -45,6 +47,7 @@ func HowtosCreate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed create howto: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed create howto: you need admin or developer permission",
 		})
 	}
@@ -56,12 +59,18 @@ func HowtosCreate(c *fiber.Ctx) error {
 	err := c.BodyParser(&howto)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
-		return err
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("POST method error: %v", err),
+		})
 	}
 	db.DB.Create(&howto)
 	log.Printf("finish create howto: %v", howto.Howto)
 
-	return c.JSON(howto)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   howto,
+	})
 }
 
 /*
@@ -75,6 +84,7 @@ func HowtoShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed show howto: howto not found: id = %v", howto.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed show howto: howto not found: id = %v", howto.Id),
 		})
 	}
@@ -84,7 +94,10 @@ func HowtoShow(c *fiber.Ctx) error {
 	db.DB.Find(&howto)
 	log.Printf("show user: id = %v, howto = %v", howto.Id, howto.Howto)
 
-	return c.JSON(howto)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   howto,
+	})
 }
 
 /*
@@ -98,6 +111,7 @@ func HowtoUpdate(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed update howto: howto not found: id = %v", howto.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed update howto: howto not found: id = %v", howto.Id),
 		})
 	}
@@ -110,6 +124,7 @@ func HowtoUpdate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed update howto: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -120,6 +135,7 @@ func HowtoUpdate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed update howto: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed update howto: you need admin or developer permission",
 		})
 	}
@@ -127,13 +143,19 @@ func HowtoUpdate(c *fiber.Ctx) error {
 	err2 := c.BodyParser(&howto)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
-		return err2
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("put method error: %v", err2),
+		})
 	}
 
 	db.DB.Model(&howto).Updates(howto)
 	log.Println("success update howto")
 
-	return c.JSON(howto)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   howto,
+	})
 }
 
 /*
@@ -147,6 +169,7 @@ func HowtoDelete(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed delete howto: howto not found: id = %v", howto.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed delete howto: howto not found: id = %v", howto.Id),
 		})
 	}
@@ -159,6 +182,7 @@ func HowtoDelete(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed delete user: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -169,6 +193,7 @@ func HowtoDelete(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed delete howto: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed delete howto: you need admin or developer permission",
 		})
 	}
@@ -177,6 +202,7 @@ func HowtoDelete(c *fiber.Ctx) error {
 	log.Println("success delete howto")
 
 	return c.JSON(fiber.Map{
+		"status":  true,
 		"message": "success delete howto",
 	})
 }
