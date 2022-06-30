@@ -20,7 +20,8 @@ func GroundsIndex(c *fiber.Ctx) error {
 	db.DB.Preload("Styles").Preload("Howtos").Preload("Fishes").Find(&grounds)
 
 	return c.JSON(fiber.Map{
-		"data": grounds,
+		"status": true,
+		"data":   grounds,
 	})
 }
 
@@ -35,6 +36,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed create ground: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -45,6 +47,7 @@ func GroundsCreate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed create ground: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed create ground: you need admin or developer permission",
 		})
 	}
@@ -56,7 +59,10 @@ func GroundsCreate(c *fiber.Ctx) error {
 	err := c.BodyParser(&groundAssoci)
 	if err != nil {
 		log.Printf("POST method error: %v", err)
-		return err
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("POST method error: %v", err),
+		})
 	}
 
 	styles := controllerlogics.GetStyles(groundAssoci.Styles)
@@ -82,7 +88,10 @@ func GroundsCreate(c *fiber.Ctx) error {
 	db.DB.Create(&ground)
 	log.Printf("finish create ground: %v", ground.Name)
 
-	return c.JSON(ground)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   ground,
+	})
 }
 
 /*
@@ -96,6 +105,7 @@ func GroundShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed show ground: ground not found: id = %v", ground.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed show ground: ground not found: id = %v", ground.Id),
 		})
 	}
@@ -105,7 +115,10 @@ func GroundShow(c *fiber.Ctx) error {
 	db.DB.Preload("Styles").Preload("Howtos").Preload("Fishes").Preload("GroundComments").Find(&ground)
 	log.Printf("show ground: id = %v, Name = %v", ground.Id, ground.Name)
 
-	return c.JSON(ground)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   ground,
+	})
 }
 
 /*
@@ -119,6 +132,7 @@ func GroundUpdate(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed update ground: ground not found: id = %v", ground.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed update ground: ground not found: id = %v", ground.Id),
 		})
 	}
@@ -131,6 +145,7 @@ func GroundUpdate(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed update ground: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -141,6 +156,7 @@ func GroundUpdate(c *fiber.Ctx) error {
 	if loginUser.PermissionType != "admin" && loginUser.PermissionType != "developer" {
 		log.Println("failed update ground: you need admin or developer permission")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "failed update ground: you need admin or developer permission",
 		})
 	}
@@ -150,7 +166,10 @@ func GroundUpdate(c *fiber.Ctx) error {
 	err2 := c.BodyParser(&groundAssoci)
 	if err2 != nil {
 		log.Printf("put method error: %v", err2)
-		return err2
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("put method error: %v", err2),
+		})
 	}
 
 	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
@@ -181,7 +200,10 @@ func GroundUpdate(c *fiber.Ctx) error {
 	db.DB.Model(&groundForUpdate).Updates(groundForUpdate)
 	log.Println("success update ground")
 
-	return c.JSON(groundForUpdate)
+	return c.JSON(fiber.Map{
+		"status": true,
+		"data":   groundForUpdate,
+	})
 }
 
 /*
@@ -195,6 +217,7 @@ func GroundDelete(c *fiber.Ctx) error {
 	if err != nil {
 		log.Printf("failed delete ground: ground not found: id = %v", ground.Id)
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": fmt.Sprintf("failed delete ground: ground not found: id = %v", ground.Id),
 		})
 	}
@@ -207,6 +230,7 @@ func GroundDelete(c *fiber.Ctx) error {
 	if issuer == "" {
 		log.Println("failed delete ground: please login")
 		return c.JSON(fiber.Map{
+			"status":  false,
 			"message": "please login",
 		})
 	}
@@ -231,6 +255,7 @@ func GroundDelete(c *fiber.Ctx) error {
 		if err != "" {
 			log.Println(err)
 			c.JSON(fiber.Map{
+				"status":  false,
 				"message": err,
 			})
 		}
@@ -240,6 +265,7 @@ func GroundDelete(c *fiber.Ctx) error {
 	log.Println("success delete ground")
 
 	return c.JSON(fiber.Map{
+		"status":  true,
 		"message": "success delete ground",
 	})
 }
