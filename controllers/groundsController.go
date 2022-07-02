@@ -246,7 +246,7 @@ func GroundDelete(c *fiber.Ctx) error {
 		})
 	}
 
-	// delete asociations (transaction)
+	// delete asociation (transaction)
 	err = db.DB.Transaction(func(tx *gorm.DB) error {
 		err := tx.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("").Error
 		if err != nil {
