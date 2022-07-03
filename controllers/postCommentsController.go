@@ -131,7 +131,7 @@ func PostCommentDelete(c *fiber.Ctx) error {
 		}
 	}
 
-	db.DB.Table("comment_replies").Where("post_comment_id = ?", postComment.Id).Delete("")
+	//db.DB.Table("comment_replies").Where("post_comment_id = ?", postComment.Id).Delete("")
 	db.DB.Delete(postComment)
 	log.Println("success delete postComment")
 
