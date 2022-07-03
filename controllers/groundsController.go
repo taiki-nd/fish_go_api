@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 /*
@@ -245,10 +246,46 @@ func GroundDelete(c *fiber.Ctx) error {
 		})
 	}
 
-	db.DB.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("")
-	db.DB.Table("ground_howtos").Where("ground_id = ?", ground.Id).Delete("")
-	db.DB.Table("ground_fishes").Where("ground_id = ?", ground.Id).Delete("")
-	db.DB.Table("ground_comments").Where("ground_id = ?", ground.Id).Delete("")
+	// delete asociation (transaction)
+	err = db.DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Table("ground_styles").Where("ground_id = ?", ground.Id).Delete("").Error
+		if err != nil {
+			return err
+		}
+
+		err = tx.Table("ground_howtos").Where("ground_id = ?", ground.Id).Delete("").Error
+		if err != nil {
+			return err
+		}
+
+		err = tx.Table("ground_fishes").Where("ground_id = ?", ground.Id).Delete("").Error
+		if err != nil {
+			return err
+		}
+
+		var groundComment_id []int64
+		tx.Table("ground_comments").Where("ground_id = ?", ground.Id).Pluck("id", &groundComment_id)
+		if len(groundComment_id) != 0 {
+			err = tx.Table("comment_replies").Where("ground_comment_id IN (?)", groundComment_id).Delete("").Error
+			if err != nil {
+				return err
+			}
+		}
+
+		err = tx.Table("ground_comments").Where("ground_id = ?", ground.Id).Delete("").Error
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		log.Printf("transaction error: %v", err)
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("transaction error: %v", err),
+		})
+	}
 
 	if ground.Filename != "" {
 		err := ImageDelete(ground.Filename)
