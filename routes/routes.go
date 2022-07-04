@@ -58,5 +58,11 @@ func Routes(app *fiber.App) {
 	app.Put("/api/posts/:id", controllers.PostUpdate)
 	app.Delete("/api/posts/:id", controllers.PostDelete)
 
+	app.Get("api/post_comments", controllers.PostCommentsIndex)
+	app.Post("/api/post_comments", controllers.PostCommentsCreate)
+	app.Get("/api/post_comments/:id", controllers.PostCommentShow)
+	app.Put("/api/post_comments/:id", controllers.PostCommentUpdate)
+	app.Delete("/api/post_comments/:id", controllers.PostCommentDelete)
+
 	app.Post("api/image", controllers.ImageUpload)
 }

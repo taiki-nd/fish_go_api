@@ -35,6 +35,7 @@ func ConnectToDb() {
 		&models.Howto{},
 		&models.Fish{},
 		&models.Ground{},
+		&models.PostComment{},
 		&models.Post{},
 	)
 }

@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 /*
@@ -17,7 +18,7 @@ func PostsIndex(c *fiber.Ctx) error {
 	log.Println("get all posts")
 
 	var posts []models.Post
-	db.DB.Find(&posts)
+	db.DB.Preload("PostComments").Find(&posts)
 
 	return c.JSON(fiber.Map{
 		"status": true,
@@ -70,7 +71,7 @@ func PostShow(c *fiber.Ctx) error {
 
 	log.Printf("start show post: id = %v", post.Id)
 
-	db.DB.Find(&post)
+	db.DB.Preload("PostComments").Find(&post)
 	log.Printf("show post: id = %v, Name = %v", post.Id, post.Name)
 
 	return c.JSON(fiber.Map{
@@ -110,45 +111,30 @@ func PostDelete(c *fiber.Ctx) error {
 	post := controllerlogics.GetPostFromId(c)
 
 	// delete asociation (transaction)
-	// err := db.DB.Transaction(func(tx *gorm.DB) error {
-	// 	err := tx.Table("post_styles").Where("post_id = ?", post.Id).Delete("").Error
-	// 	if err != nil {
-	// 		return err
-	// 	}
+	err := db.DB.Transaction(func(tx *gorm.DB) error {
+		// var postComment_id []int64
+		// tx.Table("post_comments").Where("post_id = ?", post.Id).Pluck("id", &postComment_id)
+		// if len(postComment_id) != 0 {
+		// 	err := tx.Table("comment_replies").Where("post_comment_id IN (?)", postComment_id).Delete("").Error
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// }
 
-	// 	err = tx.Table("post_howtos").Where("post_id = ?", post.Id).Delete("").Error
-	// 	if err != nil {
-	// 		return err
-	// 	}
+		err := tx.Table("post_comments").Where("post_id = ?", post.Id).Delete("").Error
+		if err != nil {
+			return err
+		}
 
-	// 	err = tx.Table("post_fishes").Where("post_id = ?", post.Id).Delete("").Error
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	var postComment_id []int64
-	// 	tx.Table("post_comments").Where("post_id = ?", post.Id).Pluck("id", &postComment_id)
-	// 	if len(postComment_id) != 0 {
-	// 		err = tx.Table("comment_replies").Where("post_comment_id IN (?)", postComment_id).Delete("").Error
-	// 		if err != nil {
-	// 			return err
-	// 		}
-	// 	}
-
-	// 	err = tx.Table("post_comments").Where("post_id = ?", post.Id).Delete("").Error
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	return nil
-	// })
-	// if err != nil {
-	// 	log.Printf("transaction error: %v", err)
-	// 	return c.JSON(fiber.Map{
-	// 		"status":  false,
-	// 		"message": fmt.Sprintf("transaction error: %v", err),
-	// 	})
-	// }
+		return nil
+	})
+	if err != nil {
+		log.Printf("transaction error: %v", err)
+		return c.JSON(fiber.Map{
+			"status":  false,
+			"message": fmt.Sprintf("transaction error: %v", err),
+		})
+	}
 
 	// if post.Filename != "" {
 	// 	err := ImageDelete(post.Filename)
