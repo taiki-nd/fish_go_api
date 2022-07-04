@@ -10,6 +10,7 @@ type PostComment struct {
 	Content   string    `json:"content" gorm:"not null; size:256"`
 	ImageUrl  string    `json:"image_url" gorm:"size:256"`
 	Filename  string    `json:"filename" gorm:"size:256"`
+	PostId    uint      `json:"post_id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
