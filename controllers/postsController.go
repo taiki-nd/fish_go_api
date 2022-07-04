@@ -17,7 +17,7 @@ func PostsIndex(c *fiber.Ctx) error {
 	log.Println("get all posts")
 
 	var posts []models.Post
-	db.DB.Find(&posts)
+	db.DB.Preload("PostComments").Find(&posts)
 
 	return c.JSON(fiber.Map{
 		"status": true,
@@ -70,7 +70,7 @@ func PostShow(c *fiber.Ctx) error {
 
 	log.Printf("start show post: id = %v", post.Id)
 
-	db.DB.Find(&post)
+	db.DB.Preload("PostComments").Find(&post)
 	log.Printf("show post: id = %v, Name = %v", post.Id, post.Name)
 
 	return c.JSON(fiber.Map{
