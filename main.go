@@ -1,7 +1,25 @@
 package main
 
-import "fmt"
+import (
+	"fish_go_api/config"
+	"fish_go_api/db"
+	"fish_go_api/routes"
+	"fish_go_api/utils"
+
+	"github.com/gofiber/fiber/v2"
+
+	"log"
+)
 
 func main() {
-	fmt.Println("hello world!")
+	utils.Logging(config.Config.Logfile)
+
+	db.ConnectToDb()
+
+	app := fiber.New()
+
+	routes.Routes(app)
+
+	log.Println("starting server at port:8000")
+	app.Listen(":8000")
 }
