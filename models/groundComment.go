@@ -6,7 +6,7 @@ import (
 
 type GroundComment struct {
 	Id             uint           `json:"id" gorm:"primarykey"`
-	Name           string         `json:"name" gorm:"not null; size:256"`
+	Name           string         `json:"name" gorm:"not null; size:256; default:gest"`
 	Content        string         `json:"content" gorm:"not null; size:256"`
 	Rate           int64          `json:"Rate"`
 	Size           int64          `json:"Size"`
